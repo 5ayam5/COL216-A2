@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{COL216 A-2 Write-up}
+\author{Mallika Prabhakar 2019CS50440 \\ Sayam Sethi 2019CS10399}
+\date{March 2021}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+
+\maketitle
+
+\section*{Problem Interpretation}
+ 
+\subsection*{Assumptions}
+Following are the assumptions which have been considered or given while attempting this assignment: 
+\begin{itemize}
+    \item Numbers are in the range 0--9
+    \item Only valid operators are +, - and *
+    \item We are given a valid postfix expression else we raise an exception
+\end{itemize} 
+
+\subsection*{Basic Idea}
+We have to implement a function which evaluates a given postfix expression. If the input is invalid, we raise an exception. To implement the function, we employ the use of array as a stack. For every operator, we pop out the top two numbers, operate on them and push the result back into the stack until the stack has only one element which is the answer. Number of operators is always one less than the number of integers as input.
+
+
+\section*{Code Explanation}
+Following is the list of procedures employed along with their functioning:
+\begin{itemize}
+    \item \textbf{main} - \textbf{fileRead} function is called and the stack initialised.
+    \item \textbf{loop} - The next character from file is read and appropriate checks are made (whether it is an operator, a digit or invalid). If it is a digit, it is pushed to our stack.
+    \item \textbf{operate} - The character is verified to be one of +, - or * and appropriate operation function called else error thrown.
+    \item \textbf{product} - Multiplies the top two elements of stack.
+    \item \textbf{sum} - Adds the top two elements of stack.
+    \item \textbf{diff} - Subtracts the top two elements of stack.
+    \item \textbf{readFile} - File ``in" is opened using syscall.
+    \item \textbf{readChar} - The next character is read and appropriately modified to let its ASCII value be used.
+    \item \textbf{printRes} - The stack size is checked to be 1 (implying a valid postfix) and then the calculated result is displayed on console.
+    \item \textbf{print} - Helper function to call``print string" syscall.
+    \item \textbf{push} - Stack push operation performed, and if size exceeds max size (10,000) error thrown.
+    \item \textbf{pop} - Stack pop operation performed, and if stack empty, invalid postfix expression error thrown.
+\end{itemize}
+
+\section*{Testing}
+We have extensively tested our code broadly on the following test cases \\
+\textbf{case 1:} empty file input \\
+\textbf{case 2:} invalid postfix expression \\
+\textbf{case 3:} ab+ \\
+\textbf{case 4:} ab- \\
+\textbf{case 5:} ab* \\
+\textbf{case 6:} random postfix expression \\
+\textbf{case 7:} stack overflow \\
+\textbf{arithmetic overflow}: MIPS throws an ``Arithmetic Overflow" exception which requires some modification involving kernel memory addresses hence we did not implement handling it.
+\end{document}
+%nice yay
