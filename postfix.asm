@@ -17,11 +17,11 @@ loop:
 	jal		readChar			# reads the next char
 	beq		$v0, 0, printRes	# EOF reached, print the result
 	lw		$a0, buffer			# load buffer to register
-	blt		$a0, 49, operate	# not a digit, perform operation
-	blt		$a0, 59, push		# a digit, push to stack
-	j		fileError			# invalid character
-	li		$v0, 1
-	syscall
+	blt		$a0, 48, operate	# not a digit, perform operation
+	addi	$a0, $a0, -48		# subtract 48 to convert to int
+	bgt		$a0, 9, fileError	# invalid character
+	jal		push				# a digit, push to stack
+	j		loop
 
 # identify operator and perform operation
 operate:
@@ -31,12 +31,27 @@ operate:
 	j		fileError
 
 product:
+	jal		pop
+	move	$s3, $v0			# store the value in s3
+	jal		pop
+	mul		$a0, $s3, $v0		# multiply the top two elements of stack and store in a0
+	jal		push
 	j		loop
 
 sum:
+	jal		pop
+	move	$s3, $v0			# store the value in s3
+	jal		pop
+	add		$a0, $s3, $v0		# add the top two elements of stack and store in a0
+	jal		push
 	j		loop
 
 diff:
+	jal		pop
+	move	$s3, $v0			# store the value in s3
+	jal		pop
+	sub		$a0, $v0, $s3		# subtract the top two elements of stack and store in a0
+	jal		push
 	j		loop
 
 # reads the file
@@ -72,7 +87,10 @@ readChar:
 
 # prints the result after checking if stack size is 1
 printRes:
-	# @TODO: validate result and print it
+	bne		$s2, 4, fileError	# stack contains more than/less than 1 element
+	lw		$a0, stack($zero)		# load the only element of stack
+	li		$v0, 1
+	syscall
 	j		exit
 
 # exit the running of program
@@ -86,19 +104,43 @@ print:
 	syscall
 	jr		$ra
 
+# ####################
+# stack push operation
 push:
-	j		loop
+	beq		$s2, $s1, overflow	# max size reached
+	sw		$a0, stack($s2)		# push the element
+	addi	$s2, $s2, 4			# increment the current size
+	jr		$ra
 
-# ####
+# stack pop operation
+pop:
+	beq		$s2, 0, fileError	# pop error, hence expression is invalid
+	addi	$s2, $s2, -4		# reduce the current size
+	lw		$v0, stack($s2)		# load the top element to v0
+	jr		$ra
+
+# overflow error
+overflow:
+	la		$a0, overflowMsg
+	jal		print
+	j		exit
+
+
+
+# ####################
 # data
 	.data
 buffer:
 	.space	1
+	.align	2
 stack:
 	.space	400000				# 4e5 space allcated for the stack
+	.align	2
 MAX:
 	.word	400000				# storing the MAX permitted size
 input:
 	.asciiz	"in"
 fileErrorMsg:
-	.asciiz "File not found or error while reading file.\nTerminating..."
+	.asciiz "File not found or error while reading file or invalid postfix.\nTerminating..."
+overflowMsg:
+	.asciiz "Stack size exceeded the maximum permissible limit.\nTerminating evaluation..."
