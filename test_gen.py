@@ -1,7 +1,7 @@
 from random import randint as rand
 Map = {0:42, 1:43, 2:45}
 
-n = rand(0, rand(0, 1e5 - 1))
+n = rand(0, rand(0, int(input())))
 with open("in", "w+") as f:
 	f.write(chr(rand(48, 57)))
 	i, operators = 0, 0
