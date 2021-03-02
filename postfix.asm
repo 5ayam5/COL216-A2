@@ -1,7 +1,7 @@
 # 2019CS10399 Sayam Sethi
 # 2019CS50440 Mallika Prabhakar
 
-# ----------------------ASSIGNMENT 1---------------------------
+# ----------------------ASSIGNMENT 2---------------------------
 
 	.text
 	.globl	main
